@@ -1,0 +1,5 @@
+@import "tailwindcss";
+@theme { --color-brand-600: #4f46e5; --color-brand-700: #4338ca; --color-accent-500: #14b8a6; }
+@custom-variant dark (&:where(.dark, .dark *));
+@layer base { * { @apply border-slate-200 dark:border-slate-700; } html { @apply bg-slate-50 text-slate-950 antialiased dark:bg-slate-950 dark:text-slate-50; } body { @apply min-h-screen bg-slate-50 font-sans leading-relaxed dark:bg-slate-950; } button, a, input { @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950; } }
+

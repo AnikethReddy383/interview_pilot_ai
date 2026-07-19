@@ -1,0 +1,2 @@
+import type { ReactNode } from 'react'
+export function EmptyState({ icon, title, description }: { icon: ReactNode; title: string; description: string }) { return <section className="rounded-xl border border-dashed bg-white px-6 py-12 text-center dark:bg-slate-900"><div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-indigo-50 text-brand-600 dark:bg-indigo-950" aria-hidden="true">{icon}</div><h2 className="text-lg font-semibold">{title}</h2><p className="mx-auto mt-2 max-w-md text-sm text-slate-500">{description}</p></section> }

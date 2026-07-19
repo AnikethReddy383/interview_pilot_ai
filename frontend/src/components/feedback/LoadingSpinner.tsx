@@ -1,0 +1,2 @@
+import { LoaderCircle } from 'lucide-react'
+export function LoadingSpinner({ label = 'Loading', fullScreen = false }: { label?: string; fullScreen?: boolean }) { return <div className={`flex items-center justify-center gap-3 ${fullScreen ? 'min-h-screen' : 'py-8'}`} role="status" aria-live="polite"><LoaderCircle className="size-5 animate-spin text-brand-600 motion-reduce:animate-none" aria-hidden="true" /><span className="text-sm text-slate-500">{label}</span></div> }
