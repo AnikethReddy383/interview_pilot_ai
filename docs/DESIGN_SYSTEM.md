@@ -1,4 +1,4 @@
-# InterviewPilot AI — Design System
+# InterviewPilot — Design System
 
 **Status:** Active  
 **Owner:** Product Design  
@@ -6,7 +6,7 @@
 
 ## Design Direction
 
-InterviewPilot AI should feel calm, credible, and encouraging: a professional workspace that turns an intimidating job search into clear next actions. The interface favors focused content, visible progress, plain language, and restrained motion. Visual decoration must never compete with a user’s resume, feedback, or decision.
+InterviewPilot should feel calm, credible, and encouraging: a professional workspace that turns an intimidating job search into clear next actions. The interface favors focused content, visible progress, plain language, and restrained motion. Visual decoration must never compete with a user’s resume, feedback, or decision.
 
 ## Foundations
 

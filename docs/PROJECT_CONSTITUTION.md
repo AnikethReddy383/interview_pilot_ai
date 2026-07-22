@@ -1,4 +1,4 @@
-# InterviewPilot AI — Project Constitution
+# InterviewPilot — Project Constitution
 
 **Status:** Active  
 **Owner:** Engineering Leadership  
@@ -6,13 +6,13 @@
 
 ## Purpose
 
-This constitution is the operating agreement for InterviewPilot AI. It establishes the product and engineering decisions that protect user trust, keep delivery predictable, and let a small team move quickly without accumulating avoidable risk.
+This constitution is the operating agreement for InterviewPilot. It establishes the product and engineering decisions that protect user trust, keep delivery predictable, and let a small team move quickly without accumulating avoidable risk.
 
 When a delivery shortcut conflicts with this document, the team should choose the option that is safer for users, easier to operate, and reversible. Exceptions require an explicit, time-bound decision recorded in the pull request or architecture decision record (ADR).
 
 ## Project Goals
 
-InterviewPilot AI helps job seekers prepare stronger, more relevant applications and interviews. The product will:
+InterviewPilot helps job seekers prepare stronger, more relevant applications and interviews. The product will:
 
 - Turn a user’s resume and target job information into clear, actionable guidance.
 - Provide transparent AI-assisted insights rather than presenting inference as fact.

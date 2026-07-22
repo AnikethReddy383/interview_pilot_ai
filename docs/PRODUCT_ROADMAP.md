@@ -1,4 +1,4 @@
-# InterviewPilot AI — Product Roadmap
+# InterviewPilot — Product Roadmap
 
 **Status:** Planning baseline  
 **Owner:** Product & Engineering Leadership  
@@ -18,7 +18,7 @@ Milestones are outcome gates, not date promises. A milestone may proceed when it
 
 ## M2 — Landing Page
 
-**Goal:** Clearly communicate InterviewPilot AI’s value and convert qualified visitors into sign-up intent.
+**Goal:** Clearly communicate InterviewPilot’s value and convert qualified visitors into sign-up intent.
 
 **Deliverables:** Responsive marketing page; value proposition; feature overview; trust/privacy messaging; accessible CTA flow; basic conversion analytics.
 

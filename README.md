@@ -1,6 +1,6 @@
-# InterviewPilot AI
+# InterviewPilot
 
-InterviewPilot AI is a privacy-conscious preparation workspace for job seekers. The repository currently implements **Milestone M1 — Foundation** only: a React application shell, Supabase authentication integration, reusable accessible UI components, protected workspace routes, and a secure profile database foundation.
+InterviewPilot is a privacy-conscious preparation workspace for job seekers. The repository currently implements **Milestone M1 — Foundation** only: a React application shell, Supabase authentication integration, reusable accessible UI components, protected workspace routes, and a secure profile database foundation.
 
 No resume analysis, ATS scoring, AI, mock interview, code review, job matching, analytics, or production deployment capability is included.
 

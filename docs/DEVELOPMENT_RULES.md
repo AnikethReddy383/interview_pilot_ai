@@ -1,4 +1,4 @@
-# InterviewPilot AI — Development Rules
+# InterviewPilot — Development Rules
 
 **Status:** Active  
 **Owner:** Engineering Leadership  

@@ -1,22 +1,129 @@
-import { useState } from 'react'
-import { Navigate, Route, Routes, Link, NavLink, useNavigate } from 'react-router-dom'
-import { AlertTriangle, FileText, LayoutDashboard, LoaderCircle, LogOut, Menu, Moon, Settings, Sparkles, Sun, UploadCloud, UserRound, X } from 'lucide-react'
-import { supabase, isSupabaseConfigured } from '../lib/supabase'
-import { useAuth } from '../features/auth/AuthProvider'
-import { useTheme } from '../features/theme/ThemeProvider'
+import { Route, Routes, Link } from 'react-router-dom'
+import { AlertTriangle } from 'lucide-react'
+import { ProtectedRoute } from '../features/auth/ProtectedRoute'
+import { AuthRedirect } from '../features/auth/AuthRedirect'
 import { Button } from '../components/ui/button'
-import { Input } from '../components/ui/input'
-import { EmptyState } from '../components/feedback/EmptyState'
+import { ROUTES } from '../config/routes'
 
-function Brand() { return <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight"><span className="flex size-8 items-center justify-center rounded-lg bg-brand-600 text-white"><Sparkles className="size-4" /></span>InterviewPilot <span className="text-brand-600">AI</span></Link> }
-function Header({ onMenu }: { onMenu?: () => void }) { const { user, signOut } = useAuth(); const navigate = useNavigate(); const { dark, toggle } = useTheme(); return <header className="sticky top-0 z-30 border-b bg-white/95 backdrop-blur dark:bg-slate-950/95"><div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"><div className="flex items-center gap-2">{onMenu && <Button className="md:hidden" variant="ghost" size="sm" onClick={onMenu} aria-label="Open navigation"><Menu className="size-5" /></Button>}<Brand /></div><div className="flex items-center gap-1"><Button variant="ghost" size="sm" onClick={toggle} aria-label="Toggle theme">{dark ? <Sun className="size-4" /> : <Moon className="size-4" />}</Button>{user ? <Button variant="ghost" size="sm" onClick={() => void signOut().then(() => navigate('/'))}><LogOut className="size-4" /><span className="hidden sm:inline">Log out</span></Button> : <Link to="/login"><Button variant="ghost" size="sm">Log in</Button></Link>}</div></div></header> }
-function Footer() { return <footer className="border-t py-6 text-center text-sm text-slate-500">© {new Date().getFullYear()} InterviewPilot AI · <a className="hover:text-brand-600" href="mailto:support@interviewpilot.ai">Support</a></footer> }
-function ProtectedRoute() { const { user, loading } = useAuth(); if (loading) return <div className="flex min-h-screen items-center justify-center gap-3" role="status"><LoaderCircle className="size-5 animate-spin text-brand-600" />Restoring session</div>; return user ? <Workspace /> : <Navigate to="/login" replace /> }
-const items = [{ to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }, { to: '/profile', label: 'Profile', icon: UserRound }, { to: '/settings', label: 'Settings', icon: Settings }]
-function Workspace() { const [open, setOpen] = useState(false); return <div className="min-h-screen"><Header onMenu={() => setOpen(true)} /><div className="mx-auto flex max-w-7xl"><button aria-label="Close navigation" className={`fixed inset-0 z-30 bg-slate-950/30 md:hidden ${open ? 'block' : 'hidden'}`} onClick={() => setOpen(false)} /><aside className={`fixed inset-y-16 left-0 z-40 w-64 border-r bg-white p-4 transition-transform dark:bg-slate-950 md:sticky md:top-16 md:h-[calc(100vh-4rem)] md:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}><div className="mb-6 flex justify-end md:hidden"><Button variant="ghost" size="sm" aria-label="Close navigation" onClick={() => setOpen(false)}><X className="size-4" /></Button></div><nav className="space-y-1" aria-label="Workspace navigation">{items.map(({ to, label, icon: Icon }) => <NavLink key={to} onClick={() => setOpen(false)} to={to} className={({ isActive }) => `flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium ${isActive ? 'bg-indigo-50 text-brand-700 dark:bg-indigo-950 dark:text-indigo-200' : 'text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800'}`}><Icon className="size-4" />{label}</NavLink>)}</nav></aside><main className="min-w-0 flex-1 px-4 py-8 sm:px-6 lg:px-8"><Routes><Route path="/dashboard" element={<Dashboard />} /><Route path="/profile" element={<Placeholder title="Profile" description="Profile management is reserved for a future milestone." />} /><Route path="/settings" element={<Placeholder title="Settings" description="Advanced settings are reserved for a future milestone." />} /><Route path="*" element={<Navigate to="/dashboard" replace />} /></Routes></main></div><Footer /></div> }
-function Dashboard() { const { user } = useAuth(); const name = user?.email?.split('@')[0] ?? 'there'; return <><p className="text-sm font-medium text-brand-600">Your workspace</p><h1 className="mt-1 text-3xl font-semibold tracking-tight">Welcome, {name}</h1><p className="mt-2 text-slate-500">Your secure foundation is ready.</p><section className="mt-8 grid gap-5 lg:grid-cols-2"><div className="rounded-xl border bg-white p-6 shadow-sm dark:bg-slate-900"><h2 className="text-lg font-semibold">Getting started</h2><p className="mt-2 text-sm text-slate-500">Session persistence, secure account access, themes, and protected navigation are all in place.</p></div><div className="rounded-xl border border-dashed bg-white p-6 text-center dark:bg-slate-900"><UploadCloud className="mx-auto size-6 text-brand-600" /><h2 className="mt-3 font-semibold">Resume upload</h2><p className="mt-1 text-sm text-slate-500">UI-only placeholder. No file can be selected, stored, or processed in M1.</p><Input className="mt-4 cursor-not-allowed" type="file" disabled /></div></section><div className="mt-5"><EmptyState icon={<FileText className="size-5" />} title="Nothing to review yet" description="Your workspace will grow with future milestones. No resume data is stored in this release." /></div></> }
-function Placeholder({ title, description }: { title: string; description: string }) { return <><p className="text-sm font-medium text-brand-600">Workspace</p><h1 className="mt-1 text-3xl font-semibold tracking-tight">{title}</h1><p className="mt-2 text-slate-500">{description}</p><div className="mt-8"><EmptyState icon={<UserRound className="size-5" />} title={`${title} is coming soon`} description="This protected placeholder validates the foundation routing and layout." /></div></> }
-function Landing() { return <div className="min-h-screen"><Header /><main><section className="mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-28"><div><p className="mb-5 inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-sm font-medium text-brand-700 dark:bg-indigo-950 dark:text-indigo-200"><Sparkles className="size-4" />Your career preparation workspace</p><h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">Prepare with clarity. Show up with confidence.</h1><p className="mt-6 max-w-xl text-lg text-slate-700 dark:text-slate-200">A calm, private workspace for the moments that shape your next opportunity.</p><div className="mt-8 flex flex-col gap-3 sm:flex-row"><Link to="/register"><Button size="lg">Create your workspace</Button></Link><Link to="/login"><Button size="lg" variant="secondary">Sign in</Button></Link></div></div><div className="rounded-xl border border-indigo-100 bg-gradient-to-br from-white to-indigo-50 p-8 shadow-sm dark:border-indigo-950 dark:from-slate-900 dark:to-indigo-950/50"><p className="text-sm font-medium text-brand-600">Foundation preview</p><h2 className="mt-3 text-2xl font-semibold">Your next step, in one calm workspace.</h2><p className="mt-3 text-slate-500">Secure authentication, a responsive dashboard shell, and reusable accessible components are ready.</p></div></section></main><Footer /></div> }
-function AuthPage({ mode }: { mode: 'login' | 'register' | 'forgot' }) { const navigate = useNavigate(); const [email, setEmail] = useState(''); const [password, setPassword] = useState(''); const [message, setMessage] = useState<string | null>(null); const [busy, setBusy] = useState(false); const title = mode === 'login' ? 'Welcome back' : mode === 'register' ? 'Create your workspace' : 'Reset your password'; const submit = async (event: React.FormEvent) => { event.preventDefault(); if (!supabase) { setMessage('Add the required Supabase environment variables to enable authentication.'); return }; try { setBusy(true); setMessage(null); if (mode === 'login') { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (error) throw error; navigate('/dashboard') } else if (mode === 'register') { const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `${window.location.origin}/login` } }); if (error) throw error; setMessage('Check your email to confirm your account, then sign in.') } else { const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/login` }); if (error) throw error; setMessage('If an account exists for this email, we sent a reset link.') } } catch (error: unknown) { setMessage(error instanceof Error ? error.message : 'Something went wrong. Please try again.') } finally { setBusy(false) } }; const google = async () => { if (!supabase) return setMessage('Add the required Supabase environment variables to enable authentication.'); const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/dashboard` } }); if (error) setMessage(error.message) }; return <main className="flex min-h-screen items-center justify-center bg-slate-50 p-4 dark:bg-slate-950"><section className="w-full max-w-md rounded-xl border bg-white p-6 shadow-sm dark:bg-slate-900"><Link to="/" className="text-sm text-slate-500 hover:text-brand-600">← Back to home</Link><h1 className="mt-6 text-2xl font-semibold">{title}</h1><p className="mt-1 text-sm text-slate-500">{mode === 'forgot' ? "We'll send a secure reset link to your inbox." : 'Access your preparation workspace securely.'}</p>{!isSupabaseConfigured && <p className="mt-4 rounded-md bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">Supabase is not configured yet.</p>}{message && <p className="mt-4 rounded-md bg-slate-100 p-3 text-sm dark:bg-slate-800" role="alert">{message}</p>}<form className="mt-6 space-y-4" onSubmit={submit}><label className="block text-sm font-medium">Email<Input className="mt-1" value={email} onChange={(event) => setEmail(event.target.value)} type="email" required autoComplete="email" /></label>{mode !== 'forgot' && <label className="block text-sm font-medium">Password<Input className="mt-1" value={password} onChange={(event) => setPassword(event.target.value)} type="password" minLength={8} required autoComplete={mode === 'login' ? 'current-password' : 'new-password'} /></label>}<Button className="w-full" disabled={busy} type="submit">{busy ? 'Please wait...' : mode === 'login' ? 'Sign in' : mode === 'register' ? 'Create account' : 'Send reset link'}</Button></form>{mode === 'login' && <><div className="my-5 flex items-center gap-3 text-xs text-slate-500"><span className="h-px flex-1 bg-slate-200" />or<span className="h-px flex-1 bg-slate-200" /></div><Button className="w-full" variant="secondary" onClick={() => void google()}>Continue with Google</Button><p className="mt-5 text-center text-sm text-slate-500"><Link className="text-brand-600 hover:underline" to="/forgot-password">Forgot password?</Link> · <Link className="text-brand-600 hover:underline" to="/register">Create an account</Link></p></>}{mode !== 'login' && <p className="mt-5 text-center text-sm text-slate-500"><Link className="text-brand-600 hover:underline" to="/login">Return to sign in</Link></p>}</section></main> }
-function NotFound() { return <main className="flex min-h-screen items-center justify-center p-4"><section className="text-center"><AlertTriangle className="mx-auto size-8 text-brand-600" /><h1 className="mt-4 text-3xl font-semibold">Page not found</h1><Link className="mt-5 inline-block" to="/"><Button>Back to home</Button></Link></section></main> }
-export function App() { return <Routes><Route path="/" element={<Landing />} /><Route path="/login" element={<AuthPage mode="login" />} /><Route path="/register" element={<AuthPage mode="register" />} /><Route path="/forgot-password" element={<AuthPage mode="forgot" />} /><Route path="/dashboard/*" element={<ProtectedRoute />} /><Route path="/profile/*" element={<ProtectedRoute />} /><Route path="/settings/*" element={<ProtectedRoute />} /><Route path="*" element={<NotFound />} /></Routes> }
+// Auth pages
+import { LoginPage } from '../features/auth/pages/LoginPage'
+import { RegisterPage } from '../features/auth/pages/RegisterPage'
+import { ForgotPasswordPage } from '../features/auth/pages/ForgotPasswordPage'
+import { ResetPasswordPage } from '../features/auth/pages/ResetPasswordPage'
+import { VerificationPendingPage } from '../features/auth/pages/VerificationPendingPage'
+import { VerificationSuccessPage } from '../features/auth/pages/VerificationSuccessPage'
+import { WelcomePage } from '../features/auth/pages/WelcomePage'
+import { CompleteProfilePage } from '../features/auth/pages/CompleteProfilePage'
+import { UnauthorizedPage } from '../features/auth/pages/UnauthorizedPage'
+
+// Landing page components
+import { AnnouncementBanner } from '../features/landing/AnnouncementBanner'
+import { Navbar } from '../features/landing/Navbar'
+import { Hero } from '../features/landing/Hero'
+import { Stats } from '../features/landing/Stats'
+import { ProductPreview } from '../features/landing/ProductPreview'
+import { Logos } from '../features/landing/Logos'
+import { Features } from '../features/landing/Features'
+import { HowItWorks } from '../features/landing/HowItWorks'
+import { WhyCareerForge } from '../features/landing/WhyCareerForge'
+import { Comparison } from '../features/landing/Comparison'
+import { Pricing } from '../features/landing/Pricing'
+import { Testimonials } from '../features/landing/Testimonials'
+import { FAQ } from '../features/landing/FAQ'
+import { CTA } from '../features/landing/CTA'
+import { Footer as LandingFooter } from '../features/landing/Footer'
+import { ScrollReveal } from '../components/ui/ScrollReveal'
+
+// Dashboard (M4)
+import { DashboardLayout } from '../shared/layout/DashboardLayout'
+import { DashboardPage } from '../features/dashboard/pages/DashboardPage'
+import { ComingSoonPage } from '../features/dashboard/pages/ComingSoonPage'
+
+/* ------------------------------------------------------------------ */
+/*  Landing page                                                       */
+/* ------------------------------------------------------------------ */
+
+function Landing() {
+  return (
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-950 dark:text-slate-50">
+      <AnnouncementBanner />
+      <Navbar />
+      <main className="pt-14">
+        <Hero />
+        <ScrollReveal><Stats /></ScrollReveal>
+        <ScrollReveal><ProductPreview /></ScrollReveal>
+        <ScrollReveal><Logos /></ScrollReveal>
+        <ScrollReveal><Features /></ScrollReveal>
+        <ScrollReveal><HowItWorks /></ScrollReveal>
+        <ScrollReveal><WhyCareerForge /></ScrollReveal>
+        <ScrollReveal><Comparison /></ScrollReveal>
+        <ScrollReveal><Pricing /></ScrollReveal>
+        <ScrollReveal><Testimonials /></ScrollReveal>
+        <ScrollReveal><FAQ /></ScrollReveal>
+        <ScrollReveal><CTA /></ScrollReveal>
+      </main>
+      <LandingFooter />
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  404                                                                */
+/* ------------------------------------------------------------------ */
+
+function NotFound() {
+  return (
+    <main className="flex min-h-screen items-center justify-center p-4">
+      <section className="text-center">
+        <AlertTriangle className="mx-auto size-8 text-brand-600" />
+        <h1 className="mt-4 text-3xl font-semibold">Page not found</h1>
+        <Link className="mt-5 inline-block" to={ROUTES.HOME}>
+          <Button>Back to home</Button>
+        </Link>
+      </section>
+    </main>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Root router                                                        */
+/* ------------------------------------------------------------------ */
+
+export function App() {
+  return (
+    <Routes>
+      {/* Public */}
+      <Route path={ROUTES.HOME} element={<Landing />} />
+
+      {/* Auth (redirect if already logged in) */}
+      <Route path={ROUTES.LOGIN} element={<AuthRedirect><LoginPage /></AuthRedirect>} />
+      <Route path={ROUTES.REGISTER} element={<AuthRedirect><RegisterPage /></AuthRedirect>} />
+      <Route path={ROUTES.FORGOT_PASSWORD} element={<AuthRedirect><ForgotPasswordPage /></AuthRedirect>} />
+
+      {/* Auth flow (public) */}
+      <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
+      <Route path={ROUTES.VERIFICATION_PENDING} element={<VerificationPendingPage />} />
+      <Route path={ROUTES.VERIFY_EMAIL} element={<VerificationSuccessPage />} />
+      <Route path={ROUTES.UNAUTHORIZED} element={<UnauthorizedPage />} />
+
+      {/* Onboarding (protected) */}
+      <Route path={ROUTES.ONBOARDING} element={<ProtectedRoute><WelcomePage /></ProtectedRoute>} />
+      <Route path={ROUTES.ONBOARDING_COMPLETE_PROFILE} element={<ProtectedRoute><CompleteProfilePage /></ProtectedRoute>} />
+
+      {/* Protected workspace — DashboardLayout renders Outlet */}
+      <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+        <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
+        <Route path={ROUTES.RESUME} element={<ComingSoonPage />} />
+        <Route path={ROUTES.ANALYSIS} element={<ComingSoonPage />} />
+        <Route path={ROUTES.JOB_MATCH} element={<ComingSoonPage />} />
+        <Route path={ROUTES.INTERVIEW_PREP} element={<ComingSoonPage />} />
+        <Route path={ROUTES.ACTIVITY} element={<ComingSoonPage />} />
+        <Route path={ROUTES.PROFILE} element={<ComingSoonPage />} />
+        <Route path={ROUTES.SETTINGS} element={<ComingSoonPage />} />
+      </Route>
+
+      {/* 404 */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  )
+}

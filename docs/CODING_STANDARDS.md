@@ -1,4 +1,4 @@
-# InterviewPilot AI — Coding Standards
+# InterviewPilot — Coding Standards
 
 **Status:** Active  
 **Owner:** Engineering Leadership  
