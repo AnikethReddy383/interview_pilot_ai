@@ -4,6 +4,7 @@ import { Dropzone } from '../components/Dropzone'
 import { ResumeCard } from '../components/ResumeCard'
 import { UploadProgressCard } from '../components/UploadProgressCard'
 import { ResumeSkeleton } from '../components/ResumeSkeleton'
+import { ParsedResumeView, type ResumeDatabaseRecord } from '../../resume-parser'
 
 export function ResumePage() {
   const {
@@ -17,6 +18,7 @@ export function ResumePage() {
     deleteFile,
     getDownloadUrl,
     clearError,
+    reload,
   } = useResumeUpload()
 
   return (
@@ -70,12 +72,18 @@ export function ResumePage() {
           progress={progress}
         />
       ) : resume ? (
-        <ResumeCard
-          resume={resume}
-          onReplace={(file) => void replaceFile(file)}
-          onDelete={() => void deleteFile()}
-          getDownloadUrl={getDownloadUrl}
-        />
+        <div className="space-y-6">
+          <ResumeCard
+            resume={resume}
+            onReplace={(file) => void replaceFile(file)}
+            onDelete={() => void deleteFile()}
+            getDownloadUrl={getDownloadUrl}
+          />
+          <ParsedResumeView
+            resume={resume as unknown as ResumeDatabaseRecord}
+            onParseComplete={() => void reload()}
+          />
+        </div>
       ) : (
         <Dropzone onFileSelect={(file) => void uploadFile(file)} />
       )}
