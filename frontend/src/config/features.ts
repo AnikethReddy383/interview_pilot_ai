@@ -5,7 +5,7 @@
 
 export const FEATURES = {
   /** Resume upload & management */
-  resumeUpload: false,
+  resumeUpload: true,
   /** AI-powered resume analysis */
   aiAnalysis: false,
   /** ATS compatibility scoring */

@@ -1,20 +1,45 @@
+import { lazy, Suspense } from 'react'
 import { Route, Routes, Link } from 'react-router-dom'
 import { AlertTriangle } from 'lucide-react'
 import { ProtectedRoute } from '../features/auth/ProtectedRoute'
 import { AuthRedirect } from '../features/auth/AuthRedirect'
 import { Button } from '../components/ui/button'
+import { PageLoader } from '../components/ui/PageLoader'
+import { ErrorBoundary } from '../components/error/ErrorBoundary'
 import { ROUTES } from '../config/routes'
 
-// Auth pages
-import { LoginPage } from '../features/auth/pages/LoginPage'
-import { RegisterPage } from '../features/auth/pages/RegisterPage'
-import { ForgotPasswordPage } from '../features/auth/pages/ForgotPasswordPage'
-import { ResetPasswordPage } from '../features/auth/pages/ResetPasswordPage'
-import { VerificationPendingPage } from '../features/auth/pages/VerificationPendingPage'
-import { VerificationSuccessPage } from '../features/auth/pages/VerificationSuccessPage'
-import { WelcomePage } from '../features/auth/pages/WelcomePage'
-import { CompleteProfilePage } from '../features/auth/pages/CompleteProfilePage'
-import { UnauthorizedPage } from '../features/auth/pages/UnauthorizedPage'
+// Lazy-loaded Auth pages
+const LoginPage = lazy(() =>
+  import('../features/auth/pages/LoginPage').then((m) => ({ default: m.LoginPage })),
+)
+const RegisterPage = lazy(() =>
+  import('../features/auth/pages/RegisterPage').then((m) => ({ default: m.RegisterPage })),
+)
+const ForgotPasswordPage = lazy(() =>
+  import('../features/auth/pages/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage })),
+)
+const ResetPasswordPage = lazy(() =>
+  import('../features/auth/pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage })),
+)
+const VerificationPendingPage = lazy(() =>
+  import('../features/auth/pages/VerificationPendingPage').then((m) => ({
+    default: m.VerificationPendingPage,
+  })),
+)
+const VerificationSuccessPage = lazy(() =>
+  import('../features/auth/pages/VerificationSuccessPage').then((m) => ({
+    default: m.VerificationSuccessPage,
+  })),
+)
+const WelcomePage = lazy(() =>
+  import('../features/auth/pages/WelcomePage').then((m) => ({ default: m.WelcomePage })),
+)
+const CompleteProfilePage = lazy(() =>
+  import('../features/auth/pages/CompleteProfilePage').then((m) => ({ default: m.CompleteProfilePage })),
+)
+const UnauthorizedPage = lazy(() =>
+  import('../features/auth/pages/UnauthorizedPage').then((m) => ({ default: m.UnauthorizedPage })),
+)
 
 // Landing page components
 import { AnnouncementBanner } from '../features/landing/AnnouncementBanner'
@@ -34,10 +59,19 @@ import { CTA } from '../features/landing/CTA'
 import { Footer as LandingFooter } from '../features/landing/Footer'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 
-// Dashboard (M4)
-import { DashboardLayout } from '../shared/layout/DashboardLayout'
-import { DashboardPage } from '../features/dashboard/pages/DashboardPage'
-import { ComingSoonPage } from '../features/dashboard/pages/ComingSoonPage'
+// Lazy-loaded Dashboard pages
+const DashboardLayout = lazy(() =>
+  import('../shared/layout/DashboardLayout').then((m) => ({ default: m.DashboardLayout })),
+)
+const DashboardPage = lazy(() =>
+  import('../features/dashboard/pages/DashboardPage').then((m) => ({ default: m.DashboardPage })),
+)
+const ResumePage = lazy(() =>
+  import('../features/resume/pages/ResumePage').then((m) => ({ default: m.ResumePage })),
+)
+const ComingSoonPage = lazy(() =>
+  import('../features/dashboard/pages/ComingSoonPage').then((m) => ({ default: m.ComingSoonPage })),
+)
 
 /* ------------------------------------------------------------------ */
 /*  Landing page                                                       */
@@ -91,39 +125,43 @@ function NotFound() {
 
 export function App() {
   return (
-    <Routes>
-      {/* Public */}
-      <Route path={ROUTES.HOME} element={<Landing />} />
+    <ErrorBoundary>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          {/* Public */}
+          <Route path={ROUTES.HOME} element={<Landing />} />
 
-      {/* Auth (redirect if already logged in) */}
-      <Route path={ROUTES.LOGIN} element={<AuthRedirect><LoginPage /></AuthRedirect>} />
-      <Route path={ROUTES.REGISTER} element={<AuthRedirect><RegisterPage /></AuthRedirect>} />
-      <Route path={ROUTES.FORGOT_PASSWORD} element={<AuthRedirect><ForgotPasswordPage /></AuthRedirect>} />
+          {/* Auth (redirect if already logged in) */}
+          <Route path={ROUTES.LOGIN} element={<AuthRedirect><LoginPage /></AuthRedirect>} />
+          <Route path={ROUTES.REGISTER} element={<AuthRedirect><RegisterPage /></AuthRedirect>} />
+          <Route path={ROUTES.FORGOT_PASSWORD} element={<AuthRedirect><ForgotPasswordPage /></AuthRedirect>} />
 
-      {/* Auth flow (public) */}
-      <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
-      <Route path={ROUTES.VERIFICATION_PENDING} element={<VerificationPendingPage />} />
-      <Route path={ROUTES.VERIFY_EMAIL} element={<VerificationSuccessPage />} />
-      <Route path={ROUTES.UNAUTHORIZED} element={<UnauthorizedPage />} />
+          {/* Auth flow (public) */}
+          <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
+          <Route path={ROUTES.VERIFICATION_PENDING} element={<VerificationPendingPage />} />
+          <Route path={ROUTES.VERIFY_EMAIL} element={<VerificationSuccessPage />} />
+          <Route path={ROUTES.UNAUTHORIZED} element={<UnauthorizedPage />} />
 
-      {/* Onboarding (protected) */}
-      <Route path={ROUTES.ONBOARDING} element={<ProtectedRoute><WelcomePage /></ProtectedRoute>} />
-      <Route path={ROUTES.ONBOARDING_COMPLETE_PROFILE} element={<ProtectedRoute><CompleteProfilePage /></ProtectedRoute>} />
+          {/* Onboarding (protected) */}
+          <Route path={ROUTES.ONBOARDING} element={<ProtectedRoute><WelcomePage /></ProtectedRoute>} />
+          <Route path={ROUTES.ONBOARDING_COMPLETE_PROFILE} element={<ProtectedRoute><CompleteProfilePage /></ProtectedRoute>} />
 
-      {/* Protected workspace — DashboardLayout renders Outlet */}
-      <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
-        <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
-        <Route path={ROUTES.RESUME} element={<ComingSoonPage />} />
-        <Route path={ROUTES.ANALYSIS} element={<ComingSoonPage />} />
-        <Route path={ROUTES.JOB_MATCH} element={<ComingSoonPage />} />
-        <Route path={ROUTES.INTERVIEW_PREP} element={<ComingSoonPage />} />
-        <Route path={ROUTES.ACTIVITY} element={<ComingSoonPage />} />
-        <Route path={ROUTES.PROFILE} element={<ComingSoonPage />} />
-        <Route path={ROUTES.SETTINGS} element={<ComingSoonPage />} />
-      </Route>
+          {/* Protected workspace — DashboardLayout renders Outlet */}
+          <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+            <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
+            <Route path={ROUTES.RESUME} element={<ResumePage />} />
+            <Route path={ROUTES.ANALYSIS} element={<ComingSoonPage />} />
+            <Route path={ROUTES.JOB_MATCH} element={<ComingSoonPage />} />
+            <Route path={ROUTES.INTERVIEW_PREP} element={<ComingSoonPage />} />
+            <Route path={ROUTES.ACTIVITY} element={<ComingSoonPage />} />
+            <Route path={ROUTES.PROFILE} element={<ComingSoonPage />} />
+            <Route path={ROUTES.SETTINGS} element={<ComingSoonPage />} />
+          </Route>
 
-      {/* 404 */}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+          {/* 404 */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+    </ErrorBoundary>
   )
 }

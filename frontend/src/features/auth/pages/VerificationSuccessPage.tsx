@@ -34,7 +34,8 @@ export function VerificationSuccessPage() {
     // No error in the hash — wait for Supabase to process the tokens.
     // detectSessionInUrl handles the implicit-flow hash (#access_token=...).
     // We poll getSession() to wait for it.
-    if (!supabase) {
+    const client = supabase
+    if (!client) {
       setState('error')
       setErrorDescription('Supabase is not configured.')
       return
@@ -50,7 +51,7 @@ export function VerificationSuccessPage() {
 
       for (let i = 0; i < maxAttempts; i++) {
         if (cancelled) return
-        const { data } = await supabase.auth.getSession()
+        const { data } = await client.auth.getSession()
         if (data.session) {
           if (!cancelled) setState('success')
           return
@@ -68,7 +69,7 @@ export function VerificationSuccessPage() {
     }
 
     // Also listen for auth state changes — this fires when the hash is consumed
-    const { data: listener } = supabase.auth.onAuthStateChange(
+    const { data: listener } = client.auth.onAuthStateChange(
       (event, session) => {
         if (
           (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') &&
